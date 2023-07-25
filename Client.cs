@@ -39,6 +39,9 @@ namespace GameServer
                 socket.ReceiveBufferSize = dataBufferSize;
                 socket.SendBufferSize = dataBufferSize;
                 stream = socket.GetStream();
+
+                recieveBuffer = new byte[dataBufferSize];
+
                 stream.BeginRead(recieveBuffer, 0, dataBufferSize, ReceieveCallback, null);
 
                 // welcome packet
