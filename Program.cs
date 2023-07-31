@@ -1,9 +1,45 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using GameServer;
+using System.Threading;
 
-Console.Title = "Server";
+namespace GameServer
+{
+    class Program
+    {
+        private static bool isRunning = false;
 
-Server.Start(8, 5500);
+        static void Main(string[] args)
+        {
+            Console.Title = "Server";
+            isRunning = true;
 
-Console.ReadKey();
+            Thread mainThread = new Thread(new ThreadStart(MainThread));
+            mainThread.Start();
+
+            Server.Start(8, 5500);
+        }
+
+        private static void MainThread()
+        {
+            Console.WriteLine($"Main thread started. running at { Constants.TICKS_PER_SEC } ticks/sec");
+            DateTime nextLoop = DateTime.Now;
+
+            while (isRunning)
+            {
+                while(nextLoop < DateTime.Now)
+                {
+                    GameLogic.Update();
+
+                    nextLoop = nextLoop.AddMilliseconds(Constants.MS_PER_TICK);
+
+                    if(nextLoop > DateTime.Now)
+                    {
+                        Thread.Sleep(nextLoop - DateTime.Now);
+                    }
+                }
+            }
+        }
+    }
+}
+
