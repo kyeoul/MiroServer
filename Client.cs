@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace GameServer
 {
@@ -15,6 +16,8 @@ namespace GameServer
         public int id;
         public TCP tcp;
         public UDP udp;
+
+        public Player player;
 
         public Client(int _clientId)
         {
@@ -149,7 +152,6 @@ namespace GameServer
             public void Connect(IPEndPoint _endPoint)
             {
                 endPoint = _endPoint;
-                ServerSend.UDPTest(id);
             }
 
             public void SendData(Packet _packet)
@@ -170,6 +172,27 @@ namespace GameServer
                         Server.packetHandlers[_packetId](id, _packet);
                     }
                 });
+            }
+        }
+
+        public void SendIntoGame(string _playerName)
+        {
+            player = new Player(id, _playerName, new Vector3(0, 0, 0));
+
+            foreach(Client _client in Server.clients.Values)
+            {
+                if(_client.player != null)
+                {
+                    ServerSend.SpawnPlayer(id, _client.player);
+                }
+            }
+
+            foreach(Client _client in Server.clients.Values)
+            {
+                if(_client.player != null)
+                {
+                    ServerSend.SpawnPlayer(_client.id, player);
+                }
             }
         }
     }

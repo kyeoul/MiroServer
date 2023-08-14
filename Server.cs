@@ -23,6 +23,8 @@ namespace GameServer
         public delegate void PacketHandler(int fromClient, Packet packet);
         public static Dictionary<int, PacketHandler> packetHandlers;
 
+        public Player player;
+
         public static void Start(int _maxPlayers, int _port)
         {
             MaxPlayers = _maxPlayers;
@@ -116,7 +118,7 @@ namespace GameServer
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                {(int)ClientPackets.udpTestReceived, ServerHandle.UDPTestReceived }
+                {(int)ClientPackets.playerMovement, ServerHandle.PlayerMovement }
             };
             Console.WriteLine("Initialized packets");
         }

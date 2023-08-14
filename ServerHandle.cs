@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 namespace GameServer
 {
 	public class ServerHandle
@@ -16,12 +17,19 @@ namespace GameServer
 			}
 
 			//Send Player into game
+			Server.clients[fromClient].SendIntoGame(username);
 		}
 
-		public static void UDPTestReceived(int _fromClient, Packet _packet)
+		public static void PlayerMovement(int _fromClient, Packet _packet)
 		{
-			string _msg = _packet.ReadString();
-			Console.WriteLine($"Received packet via UDP, containing message: {_msg}");
+			bool[] _inputs = new bool[_packet.ReadInt()];
+
+			for(int i = 0; i < _inputs.Length; i++)
+			{
+				_inputs[i] = _packet.ReadBool();
+			}
+			Quaternion _rotation = _packet.ReadQuaternion();
+			Server.clients[_fromClient].player.SetInput(_inputs, _rotation);
 		}
 	}
 }
