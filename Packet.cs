@@ -177,6 +177,19 @@ namespace GameServer
             Write(_value.Z);
             Write(_value.W);
         }
+
+        public void Write(int[][] arr)
+        {
+            Write(arr.Length);
+            Write(arr[0].Length);
+            for(int z = 0; z < arr.Length; z++)
+            {
+                for(int x = 0; x < arr[z].Length; x++)
+                {
+                    Write(arr[z][x]);
+                }
+            }
+        }
         #endregion
 
         #region Read Data
@@ -357,6 +370,24 @@ namespace GameServer
         public Quaternion ReadQuaternion(bool _moveReadPos = true)
         {
             return new Quaternion(ReadFloat(_moveReadPos), ReadFloat(_moveReadPos), ReadFloat(_moveReadPos), ReadFloat(_moveReadPos));
+        }
+
+        public int[][] ReadArr(bool _moveReadPos = true)
+        {
+            int width = ReadInt(_moveReadPos);
+            int length = ReadInt(_moveReadPos);
+            int[][] res = new int[width][];
+
+            for(int z = 0; z < width; z++)
+            {
+                res[z] = new int[length];
+                for(int x = 0; x < length; x++)
+                {
+                    res[z][x] = ReadInt(_moveReadPos);
+                }
+            }
+
+            return res;
         }
         #endregion
 

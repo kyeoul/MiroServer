@@ -20,6 +20,7 @@ namespace GameServer
 			Server.clients[fromClient].SendIntoGame(username);
 		}
 
+		// Change (filter out player data that isn't {turn})
 		public static void PlayerMovement(int _fromClient, Packet _packet)
 		{
 			bool[] _inputs = new bool[_packet.ReadInt()];

@@ -17,6 +17,7 @@ namespace GameServer
         public TCP tcp;
         public UDP udp;
 
+        // Probably remove
         public Player player;
 
         public Client(int _clientId)
@@ -40,7 +41,7 @@ namespace GameServer
                 id = _id;
             }
 
-            public void Connect(TcpClient _socket)
+            public void Connect(TcpClient _socket, int[][] maze)
             {
                 socket = _socket;
                 socket.ReceiveBufferSize = dataBufferSize;
@@ -53,7 +54,8 @@ namespace GameServer
                 stream.BeginRead(recieveBuffer, 0, dataBufferSize, ReceieveCallback, null);
 
                 // welcome packet
-                ServerSend.Welcome(id, "Hello Client");
+                // Maze sent here
+                ServerSend.Welcome(id, "Hello Client", maze);
             }
 
             public void SendData(Packet packet)
@@ -175,6 +177,7 @@ namespace GameServer
             }
         }
 
+        // Change (we dont need to spawn a player)
         public void SendIntoGame(string _playerName)
         {
             player = new Player(id, _playerName, new Vector3(0, 0, 0));

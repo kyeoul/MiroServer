@@ -58,12 +58,13 @@ namespace GameServer
             }
         }
 
-        public static void Welcome(int _toClient, string _msg)
+        public static void Welcome(int _toClient, string _msg, int[][] maze)
 		{
 			using (Packet packet = new Packet((int)ServerPackets.welcome))
 			{
 				packet.Write(_msg);
 				packet.Write(_toClient);
+                packet.Write(maze);
 				SendTCPData(_toClient, packet);
 			}
 		}
@@ -100,6 +101,8 @@ namespace GameServer
                 SendUDPDataToAll(_player.id, _packet);
             }
         }
+
+        // Add function that sends maze
     }
 }
 
