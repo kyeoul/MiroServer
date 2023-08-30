@@ -26,8 +26,25 @@ namespace GameServer
         public static Dictionary<int, PacketHandler> packetHandlers;
 
         public static Player avatar;
-        private static int[][] maze;
-        private int turn = 0;
+
+        bool started = false;
+
+        public static int[][] maze;
+
+
+
+        private static int turn = 1;
+
+        public static int getTurn()
+        {
+            return turn;
+        }
+
+        public static void setTurn(int newTurn)
+        {
+            turn = newTurn;
+        }
+
         // Add server representation of maze
 
         // Change / send maze here
@@ -37,7 +54,6 @@ namespace GameServer
             Port = _port;
 
             initializeServerData();
-            assignPlayers();
 
             tcpListener = new TcpListener(IPAddress.Any, Port);
             tcpListener.Start();
@@ -57,6 +73,7 @@ namespace GameServer
                 }
                 Console.WriteLine(line);
             }
+            
         }
 
         // Maybe change
@@ -126,10 +143,24 @@ namespace GameServer
             }
         }
 
+        public static void BeginGame()
+        {
+            assignPlayers();
+            ServerSend.BeginGame(maze);
+        }
+
         private static void assignPlayers()
         {
-            int count = 4; // For now lmao
-            int m = 3; // For now too lma
+            int m = 2; // For now too lmao
+
+            int count = 0;
+            for(int i = 1; i < MaxPlayers; i++)
+            {
+                if (clients[i].tcp.socket != null)
+                {
+                    count++;
+                }
+            }
 
             for(int z = 0; z < maze.Length; z++)
             {
@@ -138,12 +169,14 @@ namespace GameServer
                     if (maze[z][x] == -1)
                     {
                         // Calculate initial position, then set as position of player
-                        // avatar.pos = new Vector3((float)-(m * z + 0.5 * m), (float)(m * x + 0.5 * m), 0);
-                        maze[z][x] = 100;
+                        Console.WriteLine("Starting Coords: " + z.ToString() + ", " + x.ToString());
+                        maze[z][x] = 101;
+                        avatar = new Player(new Vector3((float)(m * x + 0.5 * m), 0, (float)-(m * z + 0.5 * m)));
+                        Console.WriteLine("Coords in unity space: " + avatar.pos);
                     }
                     else if (maze[z][x] == 0)
                     {
-                        maze[z][x] = rand.Next(100, 100 + count);
+                        maze[z][x] = rand.Next(101, 101 + count);
                     }
                 }
             }
@@ -163,7 +196,9 @@ namespace GameServer
             packetHandlers = new Dictionary<int, PacketHandler>()
             {
                 {(int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-                {(int)ClientPackets.playerMovement, ServerHandle.PlayerMovement }
+                {(int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
+                {(int)ClientPackets.playerPosition, ServerHandle.PlayerPosition},
+                {(int)ClientPackets.beginGame, ServerHandle.BeginGame}
             };
             Console.WriteLine("Initialized packets");
         }

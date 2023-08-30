@@ -58,27 +58,47 @@ namespace GameServer
             }
         }
 
-        public static void Welcome(int _toClient, string _msg, int[][] maze)
+        public static void Welcome(int _toClient, string _msg)
 		{
 			using (Packet packet = new Packet((int)ServerPackets.welcome))
 			{
 				packet.Write(_msg);
 				packet.Write(_toClient);
-                packet.Write(maze);
+                //packet.Write(maze);
+                //packet.Write(Server.avatar.pos);
 				SendTCPData(_toClient, packet);
 			}
 		}
 
-        public static void SpawnPlayer(int _toClient, Player _player)
+        public static void SpawnPlayer(int _toClient, int[][] maze)
         {
-            using(Packet _packet = new Packet((int)ServerPackets.spawnPlayer))
-            {
-                _packet.Write(_player.id);
-                _packet.Write(_player.username);
-                _packet.Write(_player.pos);
-                _packet.Write(_player.rotation);
+            //using (Packet _packet = new Packet((int)ServerPackets.spawnPlayer))
+            //{
+            //    _packet.Write(_player.id);
+            //    _packet.Write(_player.username);
+            //    _packet.Write(_player.pos);
+            //    _packet.Write(_player.rotation);
 
-                SendTCPData(_toClient, _packet);
+            //    SendTCPData(_toClient, _packet);
+            //}
+        }
+
+        public static void BeginGame(int[][] maze)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.beginGame))
+            {
+                packet.Write(maze);
+                packet.Write(Server.avatar.pos);
+                SendTCPDataToAll(packet);
+            }
+        }
+
+        public static void GetTurn()
+        {
+            using (Packet packet = new Packet((int)ServerPackets.getTurn))
+            {
+                packet.Write(Server.getTurn());
+                SendTCPDataToAll(packet);
             }
         }
 
@@ -88,7 +108,8 @@ namespace GameServer
             {
                 _packet.Write(_player.id);
                 _packet.Write(_player.pos);
-                SendUDPDataToAll(_packet);
+                //Console.WriteLine("Current Pos: " + _player.pos);
+                SendUDPData(Server.getTurn(), _packet);
             }
         }
 
@@ -98,7 +119,8 @@ namespace GameServer
             {
                 _packet.Write(_player.id);
                 _packet.Write(_player.rotation);
-                SendUDPDataToAll(_player.id, _packet);
+                // SendUDPDataToAll(_player.id, _packet);
+                SendUDPData(Server.getTurn(), _packet);
             }
         }
 

@@ -23,14 +23,39 @@ namespace GameServer
 		// Change (filter out player data that isn't {turn})
 		public static void PlayerMovement(int _fromClient, Packet _packet)
 		{
-			bool[] _inputs = new bool[_packet.ReadInt()];
-
-			for(int i = 0; i < _inputs.Length; i++)
+			if (Server.getTurn() == _fromClient)
 			{
-				_inputs[i] = _packet.ReadBool();
+				bool[] _inputs = new bool[_packet.ReadInt()];
+
+				for (int i = 0; i < _inputs.Length; i++)
+				{
+					_inputs[i] = _packet.ReadBool();
+				}
+				Quaternion _rotation = _packet.ReadQuaternion();
+				float magnitude = _packet.ReadFloat();
+				//Console.WriteLine(_rotation);
+				//Console.WriteLine(magnitude);
+				Server.avatar.SetInput(_inputs, _rotation, magnitude);
 			}
-			Quaternion _rotation = _packet.ReadQuaternion();
-			Server.clients[_fromClient].player.SetInput(_inputs, _rotation);
+
+		}
+
+		// Begin the game
+		public static void BeginGame(int _fromClient, Packet _packet)
+		{
+			// fromclient and packet could be useful in filtering out any start game requests not from the owner of the lobby
+			Console.WriteLine("Beginning Game...");
+			Server.BeginGame();
+		}
+
+		// For testing purposes
+		public static void PlayerPosition(int _fromClient, Packet _packet)
+		{
+			if(Server.getTurn() == _fromClient)
+			{
+				Vector3 pos = _packet.ReadVector3();
+				Server.avatar.pos = pos;
+			}
 		}
 	}
 }

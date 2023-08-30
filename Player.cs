@@ -4,19 +4,15 @@ namespace GameServer
 {
 	public class Player
 	{
-		public int id;
-		public string username;
-
+		public int id = 5;
 		public Vector3 pos;
 		public Quaternion rotation;
 
-		private float moveSpeed = 5f / Constants.TICKS_PER_SEC;
+		private float moveSpeed = 5f;
 		private bool[] inputs;
 
-		public Player(int _id, string _username, Vector3 _spawnPosition)
+		public Player(Vector3 _spawnPosition)
 		{
-			id = _id;
-			username = _username;
 			pos = _spawnPosition;
 			rotation = Quaternion.Identity;
 
@@ -43,7 +39,13 @@ namespace GameServer
                 _inputDirection.X -= 1;
             }
 
-			Move(_inputDirection);
+			// Move(_inputDirection);
+			//Console.WriteLine(pos);
+            Vector2 griddy = ConvertPosToGrid(pos);
+			Server.setTurn(Server.maze[(int)griddy.X][(int)griddy.Y] - 100);
+			id = Server.maze[(int)griddy.X][(int)griddy.Y] - 100;
+            Console.WriteLine("Grid coords: " + griddy + ", which has id " + id);
+			ServerSend.GetTurn();
         }
 
 		private void Move(Vector2 _inputDirection)
@@ -56,9 +58,17 @@ namespace GameServer
 
 			ServerSend.PlayerPosition(this);
 			ServerSend.PlayerRotation(this);
-		}
 
-		public void SetInput(bool[] _inputs, Quaternion _rotation)
+        }
+
+        private Vector2 ConvertPosToGrid(Vector3 pos)
+        {
+            int tempM = 2;
+
+            return new Vector2((float) Math.Floor(-pos.Z / tempM), (float)Math.Floor(pos.X / tempM));
+        }
+
+        public void SetInput(bool[] _inputs, Quaternion _rotation, float speed)
 		{
 			inputs = _inputs;
 			rotation = _rotation;

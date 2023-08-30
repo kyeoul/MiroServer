@@ -14,11 +14,12 @@ namespace GameServer
     {
         public static int dataBufferSize = 4096;
         public int id;
+        public string username;
         public TCP tcp;
         public UDP udp;
 
         // Probably remove
-        public Player player;
+        // public Player player;
 
         public Client(int _clientId)
         {
@@ -55,7 +56,7 @@ namespace GameServer
 
                 // welcome packet
                 // Maze sent here
-                ServerSend.Welcome(id, "Hello Client", maze);
+                ServerSend.Welcome(id, "Hello Client");
             }
 
             public void SendData(Packet packet)
@@ -180,23 +181,23 @@ namespace GameServer
         // Change (we dont need to spawn a player)
         public void SendIntoGame(string _playerName)
         {
-            player = new Player(id, _playerName, new Vector3(0, 0, 0));
+            //player = new Player(id, _playerName, new Vector3(0, 0, 0));
 
-            foreach(Client _client in Server.clients.Values)
-            {
-                if(_client.player != null)
-                {
-                    ServerSend.SpawnPlayer(id, _client.player);
-                }
-            }
+            //foreach(Client _client in Server.clients.Values)
+            //{
+            //    if(_client.player != null)
+            //    {
+            //        ServerSend.SpawnPlayer(id, _client.player);
+            //    }
+            //}
 
-            foreach(Client _client in Server.clients.Values)
-            {
-                if(_client.player != null)
-                {
-                    ServerSend.SpawnPlayer(_client.id, player);
-                }
-            }
+            //foreach(Client _client in Server.clients.Values)
+            //{
+            //    if(_client.player != null)
+            //    {
+            //        ServerSend.SpawnPlayer(_client.id, player);
+            //    }
+            //}
         }
     }
 }
