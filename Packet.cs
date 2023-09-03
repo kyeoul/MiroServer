@@ -13,7 +13,8 @@ namespace GameServer
         playerPos,
         playerRotation,
         beginGame,
-        getTurn
+        getTurn,
+        sendWin,
     }
 
     /// <summary>Sent from client to server.</summary>

@@ -42,9 +42,29 @@ namespace GameServer
 			// Move(_inputDirection);
 			//Console.WriteLine(pos);
             Vector2 griddy = ConvertPosToGrid(pos);
-			Server.setTurn(Server.maze[(int)griddy.X][(int)griddy.Y] - 100);
-			id = Server.maze[(int)griddy.X][(int)griddy.Y] - 100;
-            Console.WriteLine("Grid coords: " + griddy + ", which has id " + id);
+			int intAtGriddy = Server.maze[(int)griddy.X][(int)griddy.Y];
+
+            if (intAtGriddy == 2)
+			{
+				ServerSend.SendWin();
+				Console.WriteLine("Wow the game was won");
+				Program.setRunning(false);
+			}
+			else if (intAtGriddy == -1)
+			{
+                Server.setTurn(1);
+            }
+			else
+			{
+				if(intAtGriddy - 100 != Server.getTurn())
+
+				{
+					ServerSend.PlayerPosition(intAtGriddy - 100);
+					ServerSend.PlayerRotation(intAtGriddy - 100);
+				}
+                Server.setTurn(intAtGriddy - 100);
+            }
+
 			ServerSend.GetTurn();
         }
 
@@ -56,8 +76,8 @@ namespace GameServer
 			Vector3 _moveDirection = _right * _inputDirection.X + _forward * _inputDirection.Y;
 			pos += _moveDirection * moveSpeed;
 
-			ServerSend.PlayerPosition(this);
-			ServerSend.PlayerRotation(this);
+			//ServerSend.PlayerPosition(this);
+			//ServerSend.PlayerRotation(this);
 
         }
 

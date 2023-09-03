@@ -102,25 +102,32 @@ namespace GameServer
             }
         }
 
-        public static void PlayerPosition(Player _player)
+        public static void PlayerPosition(int _clientId)
         {
             using(Packet _packet = new Packet((int)ServerPackets.playerPos))
             {
-                _packet.Write(_player.id);
-                _packet.Write(_player.pos);
+                _packet.Write(Server.avatar.pos);
                 //Console.WriteLine("Current Pos: " + _player.pos);
-                SendUDPData(Server.getTurn(), _packet);
+                SendUDPData(_clientId, _packet);
             }
         }
 
-        public static void PlayerRotation(Player _player)
+        public static void PlayerRotation(int _clientId)
         {
             using (Packet _packet = new Packet((int)ServerPackets.playerRotation))
             {
-                _packet.Write(_player.id);
-                _packet.Write(_player.rotation);
+                _packet.Write(Server.avatar.rotation);
                 // SendUDPDataToAll(_player.id, _packet);
-                SendUDPData(Server.getTurn(), _packet);
+                SendUDPData(_clientId, _packet);
+            }
+        }
+
+        public static void SendWin()
+        {
+            using (Packet _packet = new Packet((int)ServerPackets.sendWin))
+            {
+                _packet.Write(true);
+                SendUDPDataToAll(_packet);
             }
         }
 

@@ -45,6 +45,7 @@ namespace GameServer
 		{
 			// fromclient and packet could be useful in filtering out any start game requests not from the owner of the lobby
 			Console.WriteLine("Beginning Game...");
+			Server.clients[_fromClient].ready = true;
 			Server.BeginGame();
 		}
 
@@ -55,6 +56,8 @@ namespace GameServer
 			{
 				Vector3 pos = _packet.ReadVector3();
 				Server.avatar.pos = pos;
+				Quaternion rot = _packet.ReadQuaternion();
+				Server.avatar.rotation = rot;
 			}
 		}
 	}

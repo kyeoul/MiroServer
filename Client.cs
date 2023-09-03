@@ -17,6 +17,7 @@ namespace GameServer
         public string username;
         public TCP tcp;
         public UDP udp;
+        public bool ready = false;
 
         // Probably remove
         // public Player player;

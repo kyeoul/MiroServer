@@ -31,9 +31,7 @@ namespace GameServer
 
         public static int[][] maze;
 
-
-
-        private static int turn = 1;
+        private static int turn = -1;
 
         public static int getTurn()
         {
@@ -145,6 +143,19 @@ namespace GameServer
 
         public static void BeginGame()
         {
+            // check to see if all players are "ready"
+
+            for(int i = 1; i < MaxPlayers; i++)
+            {
+                if (clients[i].tcp.socket != null)
+                {
+                    if (!clients[i].ready)
+                    {
+                        return;
+                    }
+                }
+            }
+
             assignPlayers();
             ServerSend.BeginGame(maze);
         }
@@ -170,7 +181,7 @@ namespace GameServer
                     {
                         // Calculate initial position, then set as position of player
                         Console.WriteLine("Starting Coords: " + z.ToString() + ", " + x.ToString());
-                        maze[z][x] = 101;
+                        //maze[z][x] = 101;
                         avatar = new Player(new Vector3((float)(m * x + 0.5 * m), 0, (float)-(m * z + 0.5 * m)));
                         Console.WriteLine("Coords in unity space: " + avatar.pos);
                     }
@@ -180,6 +191,8 @@ namespace GameServer
                     }
                 }
             }
+
+            turn = 1;
         }
 
         // Change (What kinds of packets will the server handle?)

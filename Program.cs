@@ -40,6 +40,11 @@ namespace GameServer
                 }
             }
         }
+
+        public static void setRunning(bool status)
+        {
+            isRunning = status;
+        }
     }
 }
 
